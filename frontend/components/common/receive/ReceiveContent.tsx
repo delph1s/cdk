@@ -122,7 +122,7 @@ const ReceiveButton = ({
     <Button
       onClick={onReceive}
       disabled={isReceiving}
-      className="w-full bg-gray-900 hover:bg-gray-800 text-white disabled:bg-gray-100 disabled:text-gray-400 dark:bg-gray-800 dark:text-white dark:disabled:bg-gray-800 dark:disabled:text-gray-400 dark:hover:bg-gray-700"
+      className="w-full"
     >
       <Gift className="w-4 h-4 mr-2" />
       {isReceiving ? '领取中...' : '立即领取'}
@@ -295,7 +295,7 @@ export function ReceiveContent({data}: ReceiveContentProps) {
           <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">{currentProject.creator_nickname || currentProject.creator_username}</div>
         </div>
         <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">风险等级</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">最低风控等级</div>
           <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">{currentProject.risk_level}</div>
         </div>
         <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">

@@ -2,11 +2,10 @@
 
 import {useState, useEffect} from 'react';
 import {useSearchParams, useRouter} from 'next/navigation';
-import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
 import {LiquidButton} from '@/components/animate-ui/buttons/liquid';
 import {Accordion, AccordionItem, AccordionTrigger, AccordionContent} from '@/components/animate-ui/radix/accordion';
 import {Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription} from '@/components/animate-ui/radix/dialog';
-import {GalleryVerticalEnd, LoaderCircle} from 'lucide-react';
+import {SquareArrowUpRight, LoaderCircle} from 'lucide-react';
 import {LinuxDo} from '@/components/icons/logo';
 import {useAuth} from '@/hooks/use-auth';
 import {cn} from '@/lib/utils';
@@ -33,10 +32,20 @@ export function LoginForm({
     const isLoggedOut = searchParams.get('logout') === 'true';
     if (isLoggedOut) {
       setLogoutMessage('您已成功登出平台');
+      // 使用 pushState 去除 logout 参数
+      const url = new URL(window.location.href);
+      url.searchParams.delete('logout');
+      window.history.pushState({}, '', url.toString());
     } else {
       setLogoutMessage('');
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    if (isAuthenticated && user && !searchParams.get('logout')) {
+      router.push('/explore');
+    }
+  }, [isAuthenticated, user, router, searchParams]);
 
   /**
    * 处理登录按钮点击
@@ -60,12 +69,6 @@ export function LoginForm({
     }
   };
 
-  /**
-   * 处理已登录用户点击头像区域
-   */
-  const handleUserClick = () => {
-    router.push('/explore');
-  };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center w-full h-screen overflow-hidden">
@@ -75,9 +78,9 @@ export function LoginForm({
           <div className="flex flex-col gap-6 transition-all duration-500 ease-in-out">
             <div className="flex flex-col items-center gap-2">
               <div className="flex size-8 items-center justify-center rounded-md m-4">
-                <GalleryVerticalEnd className="size-6" />
+                <SquareArrowUpRight className="size-6" />
               </div>
-              <h1 className="text-xl font-bold">欢迎使用 Linux Do CDK.</h1>
+              <h1 className="text-xl font-bold">欢迎使用 Linux Do CDK</h1>
             </div>
 
             {/* 登出成功提示 */}
@@ -94,29 +97,6 @@ export function LoginForm({
               </div>
             )}
 
-            {/* 已登录用户信息 */}
-            <div className={cn(
-                'transition-all duration-500 ease-in-out overflow-hidden',
-            isAuthenticated && user ? 'max-h-32 opacity-100' : 'max-h-0 opacity-0',
-            )}>
-              <div className="mx-4 transform transition-all duration-500 ease-out">
-                <div
-                  className="flex items-center justify-center gap-3 py-2 cursor-pointer hover:bg-muted rounded-lg transition-all duration-200 w-full group"
-                  onClick={handleUserClick}
-                >
-                  <Avatar className="size-15 transition-transform duration-200 group-hover:scale-105">
-                    <AvatarImage src={user?.avatar_url} alt={user?.username} />
-                    <AvatarFallback>
-                      {user?.username?.charAt(0)?.toUpperCase() || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col items-start transition-transform duration-200 group-hover:translate-x-1">
-                    <span className="text-base font-medium">{user?.username}</span>
-                    <span className="text-xs text-muted-foreground">已登录，点击进入</span>
-                  </div>
-                </div>
-              </div>
-            </div>
 
             <div className="mx-4 flex justify-center">
               <LiquidButton
